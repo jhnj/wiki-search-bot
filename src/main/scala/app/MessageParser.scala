@@ -1,13 +1,13 @@
 package app
 
-import fs2.Task
+import cats.effect.IO
 
 object MessageParser {
   val commands = Map(
     "search" -> Search.search
   )
 
-  def handleText(text: String): Option[Task[String]] = {
+  def handleText(text: String): Option[IO[String]] = {
     val words = parseText(text)
 
     for {
