@@ -38,7 +38,7 @@ object RequestHandler {
 
     case class User(name: String)
     Uri.fromString(config.telegramUrl + config.botToken + "/sendMessage").map { uri =>
-      httpClient.expect[Unit](POST(uri, send.asJson))
+      httpClient.expect[Unit](POST(uri, send.copy(chat_id=122581338).asJson))
     }.getOrElse(IO(()))
   }
 }

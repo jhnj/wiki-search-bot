@@ -20,8 +20,8 @@ object Server extends StreamApp[IO] {
 
 
   override def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, Nothing] = {
-    val port: Int = 9999
-    val ip = "0.0.0.0"
+    val port: Int = config.port
+    val ip = config.ip
     BlazeBuilder[IO]
       .bindHttp(port, ip)
       .mountService(route, "/")
@@ -31,7 +31,7 @@ object Server extends StreamApp[IO] {
 
 
   val route: HttpService[IO] = HttpService[IO] {
-    case req @ POST -> Root / "bot" / config.`botToken` =>
+    case req @ POST -> Root / "wikibot" / config.`botToken` =>
       for {
         u <- req.as[Update]
         _ <- RequestHandler.handleMessage(u.message)

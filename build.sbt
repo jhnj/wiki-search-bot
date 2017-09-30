@@ -23,5 +23,9 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-dsl" % Http4sVersion,
   "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
   "org.http4s" %% "http4s-blaze-client" % Http4sVersion,
-  "org.http4s" % "http4s-core_2.12" % "0.18.0-M1"
+  "org.http4s" % "http4s-core_2.12" % Http4sVersion
 )
+
+// set main class and skip tests for assembly
+test in assembly := {}
+mainClass in assembly := Some("app.Server")
