@@ -1,0 +1,10 @@
+bot-token = <BOT-TOKEN>
+telegram-url = "https://api.telegram.org/bot"
+
+data-path = <PATH>
+
+database = ${data-path}/index.db
+graph = ${data-path}/graph.bin
+
+ip = 0.0.0.0
+port = 3300
