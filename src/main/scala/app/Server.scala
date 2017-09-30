@@ -12,11 +12,13 @@ import org.http4s.circe._
 import org.http4s.dsl._
 import RequestHandler._
 import cats.effect.IO
+import search.Search
 
 object Server extends StreamApp[IO] {
 
   implicit lazy val config: Config = Config.read
   implicit val decoder: EntityDecoder[IO, Update] = jsonOf[IO, Update]
+  val search = new Search
 
 
   override def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, Nothing] = {
@@ -34,7 +36,7 @@ object Server extends StreamApp[IO] {
     case req @ POST -> Root / "wikibot" / config.`botToken` =>
       for {
         u <- req.as[Update]
-        _ <- RequestHandler.handleMessage(u.message)
+        _ <- RequestHandler.handleMessage(u.message, search)
         resp <- Ok()
       } yield resp
   }

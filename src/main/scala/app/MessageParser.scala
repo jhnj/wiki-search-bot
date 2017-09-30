@@ -3,8 +3,7 @@ package app
 import cats.effect.IO
 import search.{Search, SearchGraph}
 
-class MessageParser(implicit config: Config) {
-  val search = new Search
+class MessageParser(search: Search)(implicit config: Config) {
   val commands = Map(
     "search" -> search.search
   )

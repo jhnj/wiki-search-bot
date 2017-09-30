@@ -9,6 +9,7 @@ import io.circe._
 import org.http4s.Uri
 import org.http4s.circe._
 import org.http4s.client.blaze.PooledHttp1Client
+import search.Search
 
 
 object RequestHandler {
@@ -24,8 +25,8 @@ object RequestHandler {
 
   case class SendMessage(chat_id: Int, text: String)
 
-  def handleMessage(m: Message)(implicit config: Config): IO[Unit] = {
-    new MessageParser().handleText(m.text).map { task =>
+  def handleMessage(m: Message, search: Search)(implicit config: Config): IO[Unit] = {
+    new MessageParser(search).handleText(m.text).map { task =>
       for {
         responseText <- task
         res <- respond(SendMessage(m.chat.id, responseText))
