@@ -33,12 +33,12 @@ object RequestHandler {
     }.getOrElse(IO.unit)
   }
 
-  def respond(m: SendMessage)(implicit config: Config): IO[Unit] = {
+  def respond(send: SendMessage)(implicit config: Config): IO[Unit] = {
     val httpClient = PooledHttp1Client[IO]()
 
     case class User(name: String)
-    Uri.fromString(config.telegramUrl + config.telegramToken).map { uri =>
-      httpClient.expect[Unit](POST(uri, m.asJson))
+    Uri.fromString(config.telegramUrl + config.botToken + "/sendMessage").map { uri =>
+      httpClient.expect[Unit](POST(uri, send.asJson))
     }.getOrElse(IO(()))
   }
 }

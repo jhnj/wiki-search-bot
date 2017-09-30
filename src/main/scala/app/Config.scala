@@ -2,7 +2,7 @@ package app
 
 import pureconfig.loadConfigOrThrow
 
-case class Config(telegramToken: String,
+case class Config(botToken: String,
                   telegramUrl: String,
                   graph: String,
                   database: String)

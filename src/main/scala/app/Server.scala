@@ -31,17 +31,11 @@ object Server extends StreamApp[IO] {
 
 
   val route: HttpService[IO] = HttpService[IO] {
-    case req @ POST -> Root / "bot" / config.telegramToken =>
+    case req @ POST -> Root / "bot" / config.`botToken` =>
       for {
         u <- req.as[Update]
         _ <- RequestHandler.handleMessage(u.message)
         resp <- Ok()
       } yield resp
-
-    case req @ POST -> Root / "test" / token =>
-      println(req.body.
-        through(fs2.text.utf8Decode)
-        .runLog.unsafeRunSync())
-      Ok()
   }
 }
