@@ -38,8 +38,10 @@ object Server extends StreamApp[IO] {
         resp <- Ok()
       } yield resp
 
-    case POST -> Root / "test" / token =>
-      println(token)
+    case req @ POST -> Root / "test" / token =>
+      println(req.body.
+        through(fs2.text.utf8Decode)
+        .runLog.unsafeRunSync())
       Ok()
   }
 }
