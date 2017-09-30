@@ -18,6 +18,6 @@ class MessageParser(implicit config: Config) {
     } yield command(words.tail, config)
   }
 
-  // split at whitespace
-  def parseText(text: String): Seq[String] = text.trim.split("\\s+")
+  // split at | surrounded by whitespace or 2+ whitespaces
+  def parseText(text: String): Seq[String] = text.trim.split("\\s*\\|\\s*|\\s\\s+")
 }

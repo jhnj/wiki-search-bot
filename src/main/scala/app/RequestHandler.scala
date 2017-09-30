@@ -2,7 +2,6 @@ package app
 
 import cats.effect.IO
 import org.http4s.client._
-import org.http4s.client.blaze._
 import org.http4s.dsl._
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -11,16 +10,18 @@ import org.http4s.Uri
 import org.http4s.circe._
 import org.http4s.client.blaze.PooledHttp1Client
 
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object RequestHandler {
 
   case class Update(message: Message)
+
   case class Message(message_id: Option[Int],
                      date: Option[Int],
                      chat: Chat,
                      text: String)
+
   case class Chat(id: Int)
+
   case class SendMessage(chat_id: Int, text: String)
 
   def handleMessage(m: Message)(implicit config: Config): IO[Unit] = {
