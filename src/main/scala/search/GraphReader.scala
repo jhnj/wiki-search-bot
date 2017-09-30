@@ -8,8 +8,8 @@ import cats.effect.IO
 import fs2.{Chunk, Pipe, Pull, Stream}
 import fs2.io.file.readAll
 
-class GraphReader {
-  def graphStream(config: Config): Stream[IO, Int] =
+object GraphReader {
+  def graphStream(implicit config: Config): Stream[IO, Int] =
     readAll[IO](Paths.get(config.graph), 4096)
       .through(getInts)
 

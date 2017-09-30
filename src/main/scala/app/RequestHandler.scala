@@ -24,7 +24,7 @@ object RequestHandler {
   case class SendMessage(chat_id: Int, text: String)
 
   def handleMessage(m: Message)(implicit config: Config): IO[Unit] = {
-    MessageParser.handleText(m.text).map { task =>
+    new MessageParser().handleText(m.text).map { task =>
       for {
         responseText <- task
         res <- respond(SendMessage(m.chat.id, responseText))

@@ -26,5 +26,14 @@ class DB(config: Config) {
       .option
       .transact(xa)
 
+  def getTitles(offsets: List[Int]): IO[Option[List[String]]] =
+    offsets.map { offset =>
+      sql"SELECT title FROM pages WHERE offset = $offset"
+        .query[String]
+        .option
+    }
+      .sequence
+      .map(_.sequence)
+      .transact(xa)
 
 }

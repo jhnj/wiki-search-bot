@@ -1,11 +1,12 @@
 package app
 
 import cats.effect.IO
-import search.Search
+import search.{Search, SearchGraph}
 
-object MessageParser {
+class MessageParser(implicit config: Config) {
+  val search = new Search
   val commands = Map(
-    "search" -> Search.search
+    "search" -> search.search
   )
 
   def handleText(text: String)(implicit config: Config): Option[IO[String]] = {
