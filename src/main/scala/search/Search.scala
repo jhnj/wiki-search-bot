@@ -5,10 +5,10 @@ import cats.effect.IO
 import cats.implicits._
 import cats._
 import cats.data._
+import fs2.Stream
 
 
-class Search(implicit config: Config) {
-  val graphVector: Vector[Int] = GraphReader.graphStream.runLog.unsafeRunSync()
+class Search(graphVector: Vector[Int])(implicit config: Config) {
   val searchGraph = new SearchGraph(graphVector, graphVector.size)
 
   val search: (Seq[String], Config) => IO[String] =
@@ -31,7 +31,7 @@ class Search(implicit config: Config) {
     }
     nodes.flatMap {
         case Right(ofs) if ofs.length >= 2 =>
-          db.getTitles(ofs).map(formatResult)
+          IO{"test"}//db.getTitles(ofs).map(formatResult)
         case Left(notFound) => IO {
           if (notFound.length == 2)
             s"Could not find titles: ${notFound.head} and ${notFound(1)}"
@@ -59,6 +59,28 @@ class Search(implicit config: Config) {
   def sequenceEither[A,B](x: Seq[Either[A, B]]): Either[Seq[A], Seq[B]] = x partition {_.isLeft} match {
     case (Seq(), r) => Right(r map {_.right.get})
     case (l, _) => Left(l map {_.left.get})
+  }
+}
+
+object Search {
+  def apply(config: Config): IO[Search] = for {
+    graphVector <- GraphReader.graphStream(config).runLog
+    search <- IO {
+      new Search(graphVector)(config)
+    }
+  } yield search
+
+}
+
+object Test {
+  def main(args: Array[String]): Unit = {
+    val a = Config.read
+      .flatMap(config =>
+        Stream(config).zipWith(
+          Stream.eval(Search(config))
+        )((_,_))
+      ).runLog.unsafeRunSync()
+    val b = 2
   }
 }
 

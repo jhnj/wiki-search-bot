@@ -38,8 +38,7 @@ object RequestHandler {
     val httpClient = PooledHttp1Client[IO]()
 
     case class User(name: String)
-    Uri.fromString(config.telegramUrl + config.botToken + "/sendMessage").map { uri =>
-      httpClient.expect[Unit](POST(uri, send.asJson))
-    }.getOrElse(IO(()))
+    val uri = Uri.unsafeFromString(config.telegramUrl + config.botToken + "/sendMessage")
+    httpClient.expect[Unit](POST(uri, send.asJson))
   }
 }
