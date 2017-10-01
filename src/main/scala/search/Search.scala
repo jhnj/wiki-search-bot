@@ -9,21 +9,20 @@ import fs2.Stream
 
 
 class Search(graphVector: Vector[Int])(implicit config: Config) {
-  val searchGraph = new SearchGraph(graphVector, graphVector.size)
-
   val search: (Seq[String], Config) => IO[String] =
     (seq, config) => {
       if (seq.length >= 2)
-        searchGraph(seq.head, seq(1))(config)
+        doSearch(seq.head, seq(1))(config)
       else
         IO { "Need 2 parameters" }
     }
 
-  def searchGraph(from: String, to: String)(config: Config): IO[String] = {
+  def doSearch(from: String, to: String)(config: Config): IO[String] = {
     val db = new DB(config)
     val offsets: IO[Either[Seq[String], Seq[Int]]] = for {
       l <- List(from, to).traverse(getOffsetOrError(db))
     } yield sequenceEither(l)
+    val searchGraph = new SearchGraph(graphVector, graphVector.size)
     val nodes = offsets.map { either =>
       either.map { case List(f,t) =>
         searchGraph.bfs(f,t)
@@ -31,7 +30,7 @@ class Search(graphVector: Vector[Int])(implicit config: Config) {
     }
     nodes.flatMap {
         case Right(ofs) if ofs.length >= 2 =>
-          IO{"test"}//db.getTitles(ofs).map(formatResult)
+          db.getTitles(ofs).map(formatResult)
         case Left(notFound) => IO {
           if (notFound.length == 2)
             s"Could not find titles: ${notFound.head} and ${notFound(1)}"
@@ -63,24 +62,13 @@ class Search(graphVector: Vector[Int])(implicit config: Config) {
 }
 
 object Search {
-  def apply(config: Config): IO[Search] = for {
-    graphVector <- GraphReader.graphStream(config).runLog
-    search <- IO {
-      new Search(graphVector)(config)
-    }
-  } yield search
-
-}
-
-object Test {
-  def main(args: Array[String]): Unit = {
-    val a = Config.read
-      .flatMap(config =>
-        Stream(config).zipWith(
-          Stream.eval(Search(config))
-        )((_,_))
-      ).runLog.unsafeRunSync()
-    val b = 2
+  def apply(config: Config): IO[Search] = {
+    for {
+      graphVector <- GraphReader.graphStream(config).runLog
+      search <- IO {
+        new Search(graphVector)(config)
+      }
+    } yield search
   }
 }
 

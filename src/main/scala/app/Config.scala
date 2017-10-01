@@ -2,7 +2,6 @@ package app
 
 import cats.effect.IO
 import pureconfig.loadConfigOrThrow
-import fs2.Stream
 
 case class Config(botToken: String,
                   telegramUrl: String,
@@ -12,7 +11,5 @@ case class Config(botToken: String,
                   ip: String)
 
 object Config {
-  def read: Stream[IO, Config] = Stream.eval(
-    IO { loadConfigOrThrow[Config] }
-  )
+  def read: IO[Config] = IO { loadConfigOrThrow[Config] }
 }
