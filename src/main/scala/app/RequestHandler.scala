@@ -26,12 +26,14 @@ object RequestHandler {
   case class SendMessage(chat_id: Int, text: String)
 
   def handleMessage(m: Message, search: Search)(implicit config: Config): IO[Unit] = {
-    new MessageParser(search).handleText(m.text).map { task =>
-      for {
-        responseText <- task
-        res <- respond(SendMessage(m.chat.id, responseText))
-      } yield res
-    }.getOrElse(IO.unit)
+    MessageParser.
+      handleText(m.text, search)
+      .map { task =>
+        for {
+          responseText <- task
+          res <- respond(SendMessage(m.chat.id, responseText))
+        } yield res
+      }.getOrElse(IO.unit)
   }
 
   def respond(send: SendMessage)(implicit config: Config): IO[Unit] = {

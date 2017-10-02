@@ -9,15 +9,7 @@ import fs2.Stream
 
 
 class Search(graphVector: Vector[Int])(implicit config: Config) {
-  val search: (Seq[String], Config) => IO[String] =
-    (seq, config) => {
-      if (seq.length >= 2)
-        doSearch(seq.head, seq(1))(config)
-      else
-        IO { "Need 2 parameters" }
-    }
-
-  def doSearch(from: String, to: String)(config: Config): IO[String] = {
+  def search(from: String, to: String)(config: Config): IO[String] = {
     val db = new DB(config)
     val offsets: IO[Either[Seq[String], Seq[Int]]] = for {
       l <- List(from, to).traverse(getOffsetOrError(db))

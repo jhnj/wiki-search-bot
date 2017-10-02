@@ -23,7 +23,9 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-dsl" % Http4sVersion,
   "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
   "org.http4s" %% "http4s-blaze-client" % Http4sVersion,
-  "org.http4s" % "http4s-core_2.12" % Http4sVersion
+  "org.http4s" % "http4s-core_2.12" % Http4sVersion,
+
+  "org.scalatest" % "scalatest_2.12" % "3.0.4" % "test"
 )
 
 // set main class and skip tests for assembly
