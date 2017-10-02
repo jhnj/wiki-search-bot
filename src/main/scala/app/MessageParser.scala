@@ -36,7 +36,7 @@ object MessageParser {
   def parseSearch(text: String): Option[(String,String)] = {
     val tl: String => String = _.trim.toLowerCase
 
-    val searchRegex = raw"[\s ]*\(([^\)]+)\)[\s ]*\(([^\)]+)\).*".r
+    val searchRegex = raw"[\s ]*\[([^\)]+)\][\s ]*\[([^\)]+)\].*".r
     searchRegex.findPrefixMatchOf(text).flatMap {
       case regMatch: Match if regMatch.groupCount >= 2 =>
         Some((

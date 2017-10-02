@@ -16,17 +16,17 @@ class MessageParserSpec extends FlatSpec with Matchers {
   }
 
   "parseSearch" should "parse 2 parameters" in {
-    val text = "(first param)  \n (second)"
+    val text = "[first param]  \n [second]"
     MessageParser.parseSearch(text) should be (Some("first param", "second"))
   }
 
   it should "handle too few params" in {
-    val text = "(first)   "
+    val text = "[first]   "
     MessageParser.parseSearch(text) should be (None)
   }
 
   it should "handle invalid input" in {
-    val text = "(first) error (second)  "
+    val text = "[first] error [second]  "
     MessageParser.parseSearch(text) should be (None)
   }
 
