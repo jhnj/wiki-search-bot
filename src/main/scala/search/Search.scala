@@ -8,18 +8,26 @@ import cats.data._
 import fs2.Stream
 
 
-class Search(graphVector: Vector[Int])(implicit config: Config) {
+class Search(graphArray: Array[Int])(config: Config) {
   def search(from: String, to: String)(config: Config): IO[String] = {
     val db = new DB(config)
     val offsets: IO[Either[Seq[String], Seq[Int]]] = for {
       l <- List(from, to).traverse(getOffsetOrError(db))
     } yield sequenceEither(l)
-    val searchGraph = new SearchGraph(graphVector, graphVector.size)
-    val nodes = offsets.map { either =>
-      either.map { case List(f,t) =>
-        searchGraph.bfs(f,t)
+    val pageCounta: IO[Option[Int]] = db.getPageCount()
+
+    val nodes: IO[Either[Seq[String], List[Int]]] = for {
+      pageCount <- db.getPageCount()
+      either <- offsets
+    } yield {
+      pageCount.toRight(Seq()).flatMap { pc =>
+        val searchGraph = new SearchGraph(graphArray, pc + 10000)
+        either.map { case List(f,t) =>
+          searchGraph.bfs(f,t)
+        }
       }
     }
+
     nodes.flatMap {
         case Right(ofs) if ofs.length >= 2 =>
           db.getTitles(ofs).map(formatResult)
@@ -56,7 +64,7 @@ class Search(graphVector: Vector[Int])(implicit config: Config) {
 object Search {
   def apply(config: Config): IO[Search] = {
     for {
-      graphVector <- GraphReader.graphStream(config).runLog
+      graphVector <- GraphReader.readGraphArray(config.graph)
       search <- IO {
         new Search(graphVector)(config)
       }

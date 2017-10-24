@@ -33,12 +33,12 @@ class MessageParserSpec extends FlatSpec with Matchers {
   "handleText" should "parse command" in {
     implicit val config: Config = Config("","","","",1,"")
     val text = "/search something"
-    MessageParser.handleText(text, new Search(Vector(0))(config)) shouldBe defined
+    MessageParser.handleText(text, new Search(Array(0))(config)) shouldBe defined
   }
 
   "handleText" should "parse invalid command" in {
     implicit val config: Config = Config("","","","",1,"")
     val text = "/nonexisting something"
-    MessageParser.handleText(text, new Search(Vector(0))(config)) shouldBe None
+    MessageParser.handleText(text, new Search(Array(0))(config)) shouldBe None
   }
 }

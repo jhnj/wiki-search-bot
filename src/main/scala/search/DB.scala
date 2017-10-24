@@ -36,4 +36,9 @@ class DB(config: Config) {
       .map(_.sequence)
       .transact(xa)
 
+  def getPageCount(): IO[Option[Int]] =
+    sql"SELECT count(*) FROM pages"
+      .query[Int]
+      .option
+      .transact(xa)
 }

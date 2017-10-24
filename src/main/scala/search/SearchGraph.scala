@@ -2,10 +2,10 @@ package search
 
 import scala.collection.mutable
 
-class SearchGraph(graph: Vector[Int], size: Int) {
+class SearchGraph(graph: Array[Int], size: Int) {
   val prev: Array[Int] = Array.fill(size)(-1)
 
-  def links(offset: Int): Vector[Int] = {
+  def links(offset: Int): Array[Int] = {
     val numLinks = graph(offset)
     graph.slice(offset + 2, offset + numLinks + 2)
   }
