@@ -29,5 +29,9 @@ Now your bot should be up and running and able to respond to questions of the fo
 projective plane -> planar ternary ring`
 
 
+# Performance
 
+The files created with [wikipedia-graph](https://github.com/jhnj/wikipedia-graph) contain
+around 10 million pages. A search between two articles resulting in a path of length 8 takes around
+15s on my i5 laptop taking a bit over 1GB ram.
 
